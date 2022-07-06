@@ -17,50 +17,74 @@ class Calendar extends React.Component {
       daysInMonth: dayjs(dayjs().month() + 1).daysInMonth(),
       weekday: dayjs().day(), // Su-Sa
       dayInMonth: dayjs().$D, // 1-31
+      monthsInYear: this.month,
       // days: Array(this.state.daysInMonth), 
       day: [],
     }
   }
 
   componentDidMount() {
-    this.formatData();
+    this.state.monthsInYear.map((month, i) => this.formatData(this.state.monthsInYear.indexOf(month), i))
   }
 
   formatData = () => {
-    let day = [];
-    let rowCount = 1;
+    this.month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'Novemeber', 'December']
+    let monthArr = [];
 
-    for (let i = 1; i <= this.state.daysInMonth; i++) {
-      let todayDate = dayjs().set('date', i).set('month', dayjs().month());
-      if (todayDate.$W === 0) {
-        rowCount++;
+    for(let i = 0; i < this.month.length; i++){
+      let month = this.month[i];
+      let rowCount = 1;
+      let newArr = [];
+      let date = `${dayjs().year()}-${month + 1}-01`;
+      let todayDate = dayjs(date).$W;
+      let daysInMonth = dayjs(date).daysInMonth();
+      for (let j = 1; j <= daysInMonth; j++) {
+
+        if (todayDate === 0) {
+          rowCount++;
+        }
+        newArr.push({
+          day: j,
+          month: this.month[i],
+          dayInWeek: todayDate,
+          tableRow: rowCount,
+        })
+        if(todayDate === 6){
+          todayDate = 0;
+        } else {
+          todayDate++;
+        }
       }
-
-      day.push({
-        day: i,
-        dayInWeek: todayDate.$W,
-        tableRow: rowCount,
-      })
+      monthArr.push(newArr);
     }
-    console.log(day.dayInWeek);
+
     this.setState({
-      day: day,
+      day: monthArr,
     })
   }
 
   render() {
     console.log(this.state.day);
+    // console.log(dayjs(`${dayjs().year()}-07-05`).$W);
     return (
       <TableContainer>
         <Table>
           <TableBody>
-            <Day
+            {this.state.day.map((montharr, i) =>{
+              return (
+                <Day
+                  day={montharr}
+                />
+              )
+              })
+            })}
+            {/* <Day
               weekdayArr={this.weekDays}
               weekday={this.state.weekday}
               dayInMonth={this.state.dayInMonth}
               daysInMonth={this.state.daysInMonth}
               day={this.state.day}
-            />
+            /> */}
           </TableBody>
         </Table>
       </TableContainer>

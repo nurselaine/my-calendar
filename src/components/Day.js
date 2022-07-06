@@ -46,7 +46,7 @@ class Day extends React.Component {
       }
       return week;
     })
-    console.log(groups);
+
     return groups;
   }
 
@@ -66,6 +66,7 @@ class Day extends React.Component {
   }
 
   render() {
+    // console.log(this.props.day);
     let numberOfRows = this.getRows();
     let groups = this.organizeByTableRow();
     // this.renderDaysByRow(groups);
