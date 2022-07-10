@@ -66,22 +66,7 @@ class Day extends React.Component {
   }
 
   render() {
-    // console.log(this.props.day);
-    let numberOfRows = this.getRows();
     let groups = this.organizeByTableRow();
-    // this.renderDaysByRow(groups);
-    // let monthStart = this.props.day[0].dayInWeek;
-    let renderRows = numberOfRows.map((elem, i) => {
-      return (
-        <TableRow>
-          {this.props.day.map((day, i) => {
-            return (
-              <TableCell>{i}</TableCell>
-            )
-          })}
-        </TableRow>
-      )
-    })
 
     return (
       <>

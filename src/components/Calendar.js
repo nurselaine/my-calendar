@@ -2,8 +2,8 @@ import React from 'react';
 import Day from './Day.js';
 import dayjs from 'dayjs';
 import Table from '@mui/material/Table';
-import TableContainer from '@mui/material/TableContainer'
-import { TableBody } from '@mui/material';
+import TableContainer from '@mui/material/TableContainer';
+import { Paper, TableBody, TableHead, TableRow, TableCell, Button } from '@mui/material';
 
 class Calendar extends React.Component {
   constructor(props) {
@@ -20,6 +20,7 @@ class Calendar extends React.Component {
       monthsInYear: this.month,
       // days: Array(this.state.daysInMonth), 
       day: [],
+      selectedMonth: dayjs().month(),
     }
   }
 
@@ -27,11 +28,24 @@ class Calendar extends React.Component {
     this.state.monthsInYear.map((month, i) => this.formatData(this.state.monthsInYear.indexOf(month), i))
   }
 
+  incrementSelectedMonth = () => {
+    if(this.state.selectedMonth === 11) {
+      this.setState({
+        selectedMonth: 0,
+      })
+    } else {
+      this.setState({
+        selectedMonth: this.state.selectedMonth + 1,
+      })
+    }
+  }
+  
+
   formatData = () => {
     this.month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'Novemeber', 'December']
     let monthArr = [];
 
-    for(let i = 0; i < this.month.length; i++){
+    for (let i = 0; i < this.month.length; i++) {
       let month = this.month[i];
       let rowCount = 1;
       let newArr = [];
@@ -49,7 +63,7 @@ class Calendar extends React.Component {
           dayInWeek: todayDate,
           tableRow: rowCount,
         })
-        if(todayDate === 6){
+        if (todayDate === 6) {
           todayDate = 0;
         } else {
           todayDate++;
@@ -64,30 +78,46 @@ class Calendar extends React.Component {
   }
 
   render() {
-    console.log(this.state.day);
     // console.log(dayjs(`${dayjs().year()}-07-05`).$W);
+    let month = this.month[this.state.selectedMonth];
+    console.log(this.state.selectedMonth);
     return (
-      <TableContainer>
-        <Table>
-          <TableBody>
-            {this.state.day.map((montharr, i) =>{
-              return (
-                <Day
-                  day={montharr}
-                />
-              )
+      <Paper>
+        <h3>{this.month[this.state.selectedMonth]}</h3>
+        {console.log(this.month[this.state.selectedMonth])}
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {this.weekDays.map(day => {
+                  return (
+                    <TableCell>{day}</TableCell>
+                  )
+                })}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {
+
+              }
+              {this.state.day.map((montharr, i) => {
+                // console.log(montharr[0].month);
+                if(montharr[0].month === month)
+                return (
+                  <>
+                    <Day
+                      day={montharr}
+                      key={i}
+                    />
+                  </>
+                )
               })
-            })}
-            {/* <Day
-              weekdayArr={this.weekDays}
-              weekday={this.state.weekday}
-              dayInMonth={this.state.dayInMonth}
-              daysInMonth={this.state.daysInMonth}
-              day={this.state.day}
-            /> */}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              }
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Button onClick={this.incrementSelectedMonth}>></Button>
+      </Paper>
     )
   }
 }
