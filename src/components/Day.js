@@ -13,6 +13,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import dayjs from 'dayjs';
 import AddIcon from '@mui/icons-material/Add';
 import { Button } from '@mui/material';
+import EventBanner from './EventBanner';
 import './Day.css';
 
 class Day extends React.Component {
@@ -83,6 +84,21 @@ class Day extends React.Component {
     return rowArr;
   }
 
+  handleEventBanners = (day) => {
+    let newArr = this.props.day;
+    if(this.state.events.length){
+      newArr = this.props.day.map(day => {
+        return this.state.events.map(event => {
+          if(day.day === event.date.day && day.month === event.date.month){
+            return day.event = event;
+          }
+        })
+      })
+    }
+    console.log(newArr);
+    return newArr;
+  }
+
   organizeByTableRow = () => {
     let groups = [];
     /*
@@ -121,8 +137,7 @@ class Day extends React.Component {
 
   renderDaysByRow = (groups) => {
     let today = dayjs();
-    // console.log(today.$D, today.$M);
-    // console.log(this.props.month.indexOf(this.props.day[0].month), this.props.day[0].day);
+    console.log(this.state.events);
     let renderRows = groups.map((row, i) => {
       return (
         <TableRow key={i}>
@@ -138,6 +153,7 @@ class Day extends React.Component {
                     onClick={() => this.handleDayEvent(day)}
                   >
                     <p id='today-marker' >{day.day}</p>
+                    {day.event && <EventBanner event={day.event}/>}
                   </TableCell>
                 )
               } else {
@@ -148,6 +164,7 @@ class Day extends React.Component {
                     onClick={() => this.handleDayEvent(day)}
                   >
                     <p id='day-marker'>{day.day}</p>
+                    {day.event && <EventBanner event={day.event}/>}
                   </TableCell>
                 )
               }
@@ -162,7 +179,9 @@ class Day extends React.Component {
 
   render() {
     let groups = this.organizeByTableRow();
-    console.log(this.state.events);
+    console.log(this.handleEventBanners());
+    // console.log(this.state.events);
+    console.log(this.props.day);
     return (
       <>
         {this.renderDaysByRow(groups)}
