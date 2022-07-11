@@ -3,7 +3,15 @@ import Day from './Day.js';
 import dayjs from 'dayjs';
 import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
-import { Paper, TableBody, TableHead, TableRow, TableCell, Button } from '@mui/material';
+import { 
+  TableBody, 
+  TableHead, 
+  TableRow, 
+  TableCell, 
+  Button } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import './Calendar.css';
 
 class Calendar extends React.Component {
   constructor(props) {
@@ -28,8 +36,20 @@ class Calendar extends React.Component {
     this.state.monthsInYear.map((month, i) => this.formatData(this.state.monthsInYear.indexOf(month), i))
   }
 
+  decrementSelectedMonth = () => {
+    if (this.state.selectedMonth === 0) {
+      this.setState({
+        selectedMonth: 11,
+      })
+    } else {
+      this.setState({
+        selectedMonth: this.state.selectedMonth - 1,
+      })
+    }
+  }
+
   incrementSelectedMonth = () => {
-    if(this.state.selectedMonth === 11) {
+    if (this.state.selectedMonth === 11) {
       this.setState({
         selectedMonth: 0,
       })
@@ -39,7 +59,7 @@ class Calendar extends React.Component {
       })
     }
   }
-  
+
 
   formatData = () => {
     this.month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'Novemeber', 'December']
@@ -80,18 +100,18 @@ class Calendar extends React.Component {
   render() {
     // console.log(dayjs(`${dayjs().year()}-07-05`).$W);
     let month = this.month[this.state.selectedMonth];
-    console.log(this.state.selectedMonth);
+    // console.log(this.state.selectedMonth);
     return (
-      <Paper>
+      <>
         <h3>{this.month[this.state.selectedMonth]}</h3>
-        {console.log(this.month[this.state.selectedMonth])}
+        {/* {console.log(this.month[this.state.selectedMonth])} */}
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
-                {this.weekDays.map(day => {
+                {this.weekDays.map((day, i) => {
                   return (
-                    <TableCell>{day}</TableCell>
+                    <TableCell key={i}>{day}</TableCell>
                   )
                 })}
               </TableRow>
@@ -102,22 +122,26 @@ class Calendar extends React.Component {
               }
               {this.state.day.map((montharr, i) => {
                 // console.log(montharr[0].month);
-                if(montharr[0].month === month)
-                return (
-                  <>
-                    <Day
-                      day={montharr}
-                      key={i}
-                    />
-                  </>
-                )
+                if (montharr[0].month === month)
+                  return (
+                    <>
+                      <Day
+                        month={this.month}
+                        day={montharr}
+                        key={i}
+                      />
+                    </>
+                  )
               })
               }
             </TableBody>
           </Table>
         </TableContainer>
-        <Button onClick={this.incrementSelectedMonth}>></Button>
-      </Paper>
+        <div className='arrows'>
+          <Button onClick={this.decrementSelectedMonth}><ChevronLeftIcon /></Button>
+          <Button onClick={this.incrementSelectedMonth}><ChevronRightIcon /></Button>
+        </div>
+      </>
     )
   }
 }
