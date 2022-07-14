@@ -32,6 +32,24 @@ class Day extends React.Component {
     this.handleAddEvent = this.handleAddEvent.bind(this);
   }
 
+  addHolidayEvents = (groups) => {
+    this.props.holidays.map(holiday => {
+      groups.map((rows, i) => {
+        rows.map((day, j) => {
+          // console.log(day);
+          if(day.day === holiday.date.day && day.month === holiday.date.month){
+            // console.log(holiday);
+            this.state.events.push(holiday);
+            this.setState({
+              events: this.state.events,
+            })
+          }
+        })
+      })
+    })
+    // console.log(this.state.events);
+  } 
+
   handleAddEvent = (e) => {
     e.preventDefault();
 
@@ -90,12 +108,13 @@ class Day extends React.Component {
       newArr = this.props.day.map(day => {
         return this.state.events.map(event => {
           if(day.day === event.date.day && day.month === event.date.month){
-            return day.event = event;
+            day.event.push(event);
+            return day;
           }
         })
       })
     }
-    console.log(newArr);
+    // console.log(newArr);
     return newArr;
   }
 
@@ -119,7 +138,6 @@ class Day extends React.Component {
         groups[tableRow - 1] = newArray;
       }
     })
-    // console.log(groups);
     groups = groups.map((week, i) => {
       if (week.length < 7) {
         let newArr = Array(7).fill('');
@@ -137,13 +155,12 @@ class Day extends React.Component {
 
   renderDaysByRow = (groups) => {
     let today = dayjs();
-    console.log(this.state.events);
+    // console.log(this.state.events);
     let renderRows = groups.map((row, i) => {
       return (
         <TableRow key={i}>
           {
             row.map((day, j) => {
-              // console.log(day.day);
               if (this.props.month.indexOf(this.props.day[0].month) === today.$M && day.day === today.$D) {
                 return (
                   <TableCell
@@ -153,7 +170,7 @@ class Day extends React.Component {
                     onClick={() => this.handleDayEvent(day)}
                   >
                     <p id='today-marker' >{day.day}</p>
-                    {day.event && <EventBanner event={day.event}/>}
+                    {day.event.length ? <EventBanner event={day.event[0]}/> : ''}
                   </TableCell>
                 )
               } else {
@@ -163,8 +180,9 @@ class Day extends React.Component {
                     key={j}
                     onClick={() => this.handleDayEvent(day)}
                   >
+
                     <p id='day-marker'>{day.day}</p>
-                    {day.event && <EventBanner event={day.event}/>}
+                 {day && !!day.event.length ? <EventBanner event={day.event[0]}/> : ""}
                   </TableCell>
                 )
               }
@@ -178,10 +196,12 @@ class Day extends React.Component {
   }
 
   render() {
+    console.log(this.props.day)
     let groups = this.organizeByTableRow();
-    console.log(this.handleEventBanners());
+    // console.log(this.handleEventBanners());
+    this.addHolidayEvents(groups);
     // console.log(this.state.events);
-    console.log(this.props.day);
+    // console.log(this.props.day);
     return (
       <>
         {this.renderDaysByRow(groups)}
