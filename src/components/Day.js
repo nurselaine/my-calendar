@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import {
   TableCell,
   TableRow,
@@ -32,35 +33,33 @@ class Day extends React.Component {
     this.handleAddEvent = this.handleAddEvent.bind(this);
   }
 
-  addHolidayEvents = (groups) => {
-    this.props.holidays.map(holiday => {
-      groups.map((rows, i) => {
-        rows.map((day, j) => {
-          // console.log(day);
-          if(day.day === holiday.date.day && day.month === holiday.date.month){
-            // console.log(holiday);
-            this.state.events.push(holiday);
-            this.setState({
-              events: this.state.events,
-            })
-          }
-        })
-      })
-    })
-    // console.log(this.state.events);
-  } 
+  postEventData = async (eventObj) => {
+    let url = `${process.env.REACT_APP_URL}/events`;
+    let data = await axios.post(url, eventObj);
+    console.log(data);
+  }
+
+  // deleteEventData = (id) => {
+  //   let url = `${process.env.REACT_APP_URL}/events`;
+  //   let data = await axios.post(url, eventObj);
+  //   console.log(data);
+  // }
+
 
   handleAddEvent = (e) => {
     e.preventDefault();
-
     const eventObj = {
-      name: this.state.eventName,
+      title: this.state.eventName,
       description: this.state.description,
       time: this.state.time,
       date: this.state.date,
+      user: '',
     }
-    // console.log(eventObj);
+    this.props.updateEvents(eventObj);
+    this.postEventData(eventObj);
+
     this.state.events.push(eventObj);
+    // console.log(this.state.events);
     this.setState({
       events: this.state.events,
       eventName: '',
@@ -68,7 +67,7 @@ class Day extends React.Component {
       time: '',
       date: this.state.date,
     })
-
+    // console.log(this.state.events);
   }
 
   handleClose = () => {
@@ -77,18 +76,12 @@ class Day extends React.Component {
     })
   }
 
-  handleOpen = () => {
+  handleOpen = (day) => {
+    console.log(day);
     this.setState({
       showModal: true,
-    })
-    console.log('open modal');
-  }
-
-  handleDayEvent = (day) => {
-    this.setState({
       date: day,
     })
-    this.handleOpen();
   }
 
   getRows = () => {
@@ -100,22 +93,6 @@ class Day extends React.Component {
     })
     let rowArr = Array(max).fill(null);
     return rowArr;
-  }
-
-  handleEventBanners = (day) => {
-    let newArr = this.props.day;
-    if(this.state.events.length){
-      newArr = this.props.day.map(day => {
-        return this.state.events.map(event => {
-          if(day.day === event.date.day && day.month === event.date.month){
-            day.event.push(event);
-            return day;
-          }
-        })
-      })
-    }
-    // console.log(newArr);
-    return newArr;
   }
 
   organizeByTableRow = () => {
@@ -154,23 +131,36 @@ class Day extends React.Component {
   }
 
   renderDaysByRow = (groups) => {
+    // console.log(this.props.day);
     let today = dayjs();
-    // console.log(this.state.events);
     let renderRows = groups.map((row, i) => {
       return (
         <TableRow key={i}>
           {
             row.map((day, j) => {
+              // console.log(day.event);
+              // console.log(!!day.event);
               if (this.props.month.indexOf(this.props.day[0].month) === today.$M && day.day === today.$D) {
                 return (
                   <TableCell
                     key={j}
                     sx={{ color: 'success' }}
                     className='day-block'
-                    onClick={() => this.handleDayEvent(day)}
+                    onClick={() => this.handleOpen(day)}
                   >
                     <p id='today-marker' >{day.day}</p>
-                    {day.event.length ? <EventBanner event={day.event[0]}/> : ''}
+                    {
+                      !!day.event &&
+                      day.event.map((event, i) => {
+                        return (
+                          <EventBanner 
+                            key={i} 
+                            event={event} 
+                            showModal={this.state.showModal}
+                          />
+                        )
+                      })
+                    }
                   </TableCell>
                 )
               } else {
@@ -178,11 +168,23 @@ class Day extends React.Component {
                   <TableCell
                     className='day-block'
                     key={j}
-                    onClick={() => this.handleDayEvent(day)}
+                    onClick={() => this.handleOpen(day)}
                   >
 
                     <p id='day-marker'>{day.day}</p>
-                 {day && !!day.event.length ? <EventBanner event={day.event[0]}/> : ""}
+                    {
+                      day && !!day.event &&
+                      day.event.map((event, i) => {
+                        console.log(event);
+                        return (
+                          <EventBanner 
+                            key={i} 
+                            event={event} 
+                            showModal={this.state.showModal}
+                          />
+                        )
+                      })
+                    }
                   </TableCell>
                 )
               }
@@ -196,12 +198,9 @@ class Day extends React.Component {
   }
 
   render() {
-    console.log(this.props.day)
     let groups = this.organizeByTableRow();
-    // console.log(this.handleEventBanners());
-    this.addHolidayEvents(groups);
-    // console.log(this.state.events);
-    // console.log(this.props.day);
+    // console.log(`this.state.date.event ${this.state.date.event}`);
+    // console.log(`this.state.events ${this.state.events[0]}`)
     return (
       <>
         {this.renderDaysByRow(groups)}
@@ -221,15 +220,20 @@ class Day extends React.Component {
                 <Typography>Events Happening Today</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                  malesuada lacus ex, sit amet blandit leo lobortis eget.
-                </Typography>
+                {
+                  !!this.state.date.event ?
+                    this.state.date.event.map(event => {
+                      return (
+                        <EventBanner event={event} showModal={this.state.showModal}/>
+                      )
+                    })
+                    : ''
+                }
               </AccordionDetails>
             </Accordion>
             <Accordion>
               <AccordionSummary
-                expandIcon={<AddIcon/>}
+                expandIcon={<AddIcon />}
                 aria-controls="panel2a-content"
                 id="panel2a-header"
               >
@@ -237,29 +241,29 @@ class Day extends React.Component {
               </AccordionSummary>
               <AccordionDetails>
                 <form>
-                  <label>Name of Event</label><br/>
-                  <input 
-                    type='text' 
-                    name='name' 
+                  <label>Name of Event</label><br />
+                  <input
+                    type='text'
+                    name='name'
                     value={this.state.eventName}
-                    onChange={(e) => {this.setState({eventName: e.target.value})}}
-                  /><br/>
-                  <label>Description</label><br/>
-                  <input 
-                    type='text' 
-                    name='description' 
+                    onChange={(e) => { this.setState({ eventName: e.target.value }) }}
+                  /><br />
+                  <label>Description</label><br />
+                  <input
+                    type='text'
+                    name='description'
                     value={this.state.description}
-                    onChange={(e) => {this.setState({description: e.target.value})}}
-                  /><br/>
-                  <label>Time</label><br/>
-                  <input 
-                    type='time' 
-                    min='00:00' 
-                    max='2330' 
-                    name='time' 
+                    onChange={(e) => { this.setState({ description: e.target.value }) }}
+                  /><br />
+                  <label>Time</label><br />
+                  <input
+                    type='time'
+                    min='00:00'
+                    max='2330'
+                    name='time'
                     value={this.state.time}
-                    onChange={(e) => {this.setState({time: e.target.value})}}
-                  /><br/>
+                    onChange={(e) => { this.setState({ time: e.target.value }) }}
+                  /><br />
                   <Button onClick={this.handleAddEvent}>Create Event</Button>
                 </form>
               </AccordionDetails>

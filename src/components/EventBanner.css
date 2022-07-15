@@ -1,4 +1,18 @@
-div.banner-div {
+/* Section {
+  display: flex;
+} */
+
+div #banner-div {
   background-color: orange;
   border-radius: 5px;
+}
+
+div #modal-banner-div {
+  background-color: red;
+  border-radius: 5px;
+  display: flex;
+}
+
+delete-icon {
+  justify-content: end;
 }
