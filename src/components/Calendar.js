@@ -39,14 +39,7 @@ class Calendar extends React.Component {
   componentDidMount() {
 
     this.getRenderData();
-    // const formatDay = this.state.monthsInYear.map((month, i) => this.formatData(this.state.monthsInYear.indexOf(month), i));
-    // this.getHolidayData(formatDay[0]);
-    // this.getEventData(formatDay[0]);
   }
-
-  // updateEvents = (obj) => {
-  //   console.log(obj);
-  // }
 
   getUpdatedData = async () => {
     this.getRenderData();
@@ -184,23 +177,21 @@ class Calendar extends React.Component {
   }
 
   render() {
-    // console.log(dayjs(`${dayjs().year()}-07-05`).$W);
     let month = this.month[this.state.selectedMonth];
-    // console.log(this.state.selectedMonth);
-    // console.log(this.state.holidays);
-    // console.log(this.state.events);
-    // console.log(this.state.day);
     return (
       <>
-        <h3>{this.month[this.state.selectedMonth]}</h3>
-        {/* {console.log(this.month[this.state.selectedMonth])} */}
+        <div className='arrows'>
+          <Button id='arrow-btn' onClick={this.decrementSelectedMonth}><ChevronLeftIcon /></Button>
+          <h3>{this.month[this.state.selectedMonth]}</h3>
+          <Button id='arrow-btn' onClick={this.incrementSelectedMonth}><ChevronRightIcon /></Button>
+        </div>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
                 {this.weekDays.map((day, i) => {
                   return (
-                    <TableCell key={i}>{day}</TableCell>
+                    <TableCell id='weekday-header' key={i}>{day}</TableCell>
                   )
                 })}
               </TableRow>
@@ -210,7 +201,6 @@ class Calendar extends React.Component {
 
               }
               {this.state.day.map((montharr, i) => {
-                // console.log(montharr[0].month);
                 if (montharr[0].month === month)
                   return (
                     <>
@@ -219,7 +209,6 @@ class Calendar extends React.Component {
                         day={montharr}
                         holidays={this.state.holidays}
                         key={i}
-                        // updateEvents={this.getNewEvent}
                         updateData={this.getUpdatedData}
                       />
                     </>
@@ -229,10 +218,6 @@ class Calendar extends React.Component {
             </TableBody>
           </Table>
         </TableContainer>
-        <div className='arrows'>
-          <Button onClick={this.decrementSelectedMonth}><ChevronLeftIcon /></Button>
-          <Button onClick={this.incrementSelectedMonth}><ChevronRightIcon /></Button>
-        </div>
       </>
     )
   }

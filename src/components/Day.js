@@ -180,8 +180,6 @@ class Day extends React.Component {
         <TableRow key={i}>
           {
             row.map((day, j) => {
-              // console.log(day.event);
-              // console.log(!!day.event);
               if (this.props.month.indexOf(this.props.day[0].month) === today.$M && day.day === today.$D) {
                 return (
                   <TableCell
@@ -189,6 +187,7 @@ class Day extends React.Component {
                     sx={{ color: 'success' }}
                     className='day-block'
                     onClick={() => this.handleOpen(day)}
+                    id='day-btn'
                   >
                     <p id='today-marker' >{day.day}</p>
                     {
@@ -211,6 +210,7 @@ class Day extends React.Component {
                     className='day-block'
                     key={j}
                     onClick={() => this.handleOpen(day)}
+                    id='day-btn'
                   >
 
                     <p id='day-marker'>{day.day}</p>

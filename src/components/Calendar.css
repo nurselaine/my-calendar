@@ -1,4 +1,21 @@
 .arrows {
-  /* display: inline-block; */
   text-align: center;
+}
+
+h3{
+  /* text-align: center; */
+  font-size: 3rem;
+  font-family: 'Noto Sans';
+  display: inline-block;
+  color: #7d4dff
+}
+
+#arrow-btn {
+  margin-bottom: 20px;
+  color: #1be2af;
+}
+
+#weekday-header {
+  color:#1be2af;
+  font-weight: 600;
 }

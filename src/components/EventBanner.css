@@ -3,15 +3,16 @@
 } */
 
 div #banner-div {
-  background-color: orange;
+  background-color: #1be2af;;
   border-radius: 5px;
+  width: 100%;
 }
 
-div #modal-banner-div {
+/* div #modal-banner-div {
   background-color: red;
   border-radius: 5px;
   display: flex;
-}
+} */
 
 delete-icon {
   justify-content: end;
