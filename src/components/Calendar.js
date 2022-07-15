@@ -44,10 +44,12 @@ class Calendar extends React.Component {
     // this.getEventData(formatDay[0]);
   }
 
-  getUpdatedData = (newDay) => {
-    this.setState({
-      day: newDay
-    })
+  // updateEvents = (obj) => {
+  //   console.log(obj);
+  // }
+
+  getUpdatedData = async () => {
+    this.getRenderData();
   }
 
   getRenderData = async () => {
@@ -117,70 +119,6 @@ class Calendar extends React.Component {
       console.log(error.message);
     }
   }
-
-  // getEventData = async (formatDay) => {
-  //   try {
-  //     let newFormatDay = formatDay;
-  //     let url = `${process.env.REACT_APP_URL}/events/collection`;
-  //     let data = await axios.get(url);
-  //     data = data.data;
-  //     // console.log(newFormatDay[1])
-  //     console.log(data);
-  //     data.forEach(event => {
-  //       let month = event.date.month;
-  //       month = this.month.indexOf(month)
-  //       const day = event.date.day;
-  //       const correctDate = newFormatDay[month][day - 1];
-  //       console.log(correctDate);
-  //       correctDate.event.push(event);
-  //     })
-  //     // console.log(newFormatDay[1]);
-  //     this.setState({
-  //       events: data,
-  //       day: newFormatDay,
-  //     })
-  //   } catch (error) {
-  //     console.log(`oh snap! You ran into an error ${error.message}`);
-  //   }
-  // }
-
-  // getNewEvent = (eventObj) => {
-  //   this.setState({
-  //     events: eventObj,
-  //   })
-  // }
-
-  // getHolidayData = async (formatDay) => {
-  //   let newFormatDay = formatDay;
-  //   // console.log(formatDay[0])
-  //   try {
-  //     let url = `${process.env.REACT_APP_URL}/holidays?country=US&year=2021`;
-  //     // console.log(url);
-  //     let holidays = await axios.get(url);
-  //     holidays = holidays.data;
-
-  //     // merge holidays (12 days) with the format data (formatDay)
-
-  //     holidays.forEach((holiday) => {
-  //       // get month index
-  //       const month = holiday.date.month;
-  //       // get day index
-  //       const day = holiday.date.day
-  //       // test if month and day index equals correct holiday date
-  //       const correctDate = newFormatDay[month - 1][day - 1];
-  //       if (!correctDate.event.length) {
-  //         correctDate.event.push(holiday);
-  //       }
-  //     })
-  //     // console.log(holidays);
-  //     this.setState({
-  //       holidays: holidays,
-  //       day: newFormatDay
-  //     })
-  //   } catch (error) {
-  //     console.log('Oh snap! You got an error ' + error.message);
-  //   }
-  // }
 
   decrementSelectedMonth = () => {
     if (this.state.selectedMonth === 0) {
@@ -281,7 +219,7 @@ class Calendar extends React.Component {
                         day={montharr}
                         holidays={this.state.holidays}
                         key={i}
-                        updateEvents={this.getNewEvent}
+                        // updateEvents={this.getNewEvent}
                         updateData={this.getUpdatedData}
                       />
                     </>

@@ -29,7 +29,11 @@ class Day extends React.Component {
       eventName: '',
       description: '',
       time: '',
+      eventNameEdit: '',
+      descriptionEdit: '',
+      timeEdit: '',
       date: '',
+      showEditForm: false,
     })
 
     this.handleAddEvent = this.handleAddEvent.bind(this);
@@ -37,33 +41,52 @@ class Day extends React.Component {
 
   postEventData = async (eventObj) => {
     let url = `${process.env.REACT_APP_URL}/events`;
-    let data = await axios.post(url, eventObj);
-    // console.log(data);
+    await axios.post(url, eventObj);
+    this.props.updateData();
+    this.handleClose();
   }
 
-  deleteEventData = async (id) => {
+  deleteEventData = async (event) => {
     try {
+      const id = event._id;
       let url = `${process.env.REACT_APP_URL}/events/${id}`;
-      await axios.delete(url);
-      this.props.day = this.props.day.filter(day => day.event.id !== id);
-      this.props.updateData(this.props.day);
+      await axios.delete(url); // returns id of deleted obj
+      this.props.updateData();
+    } catch (error) {
+      console.log(error.message);
+    }
+    this.handleClose();
+  }
+
+  editEventData = async (obj) => {
+    try {
+      const id = obj._id;
+      let url = `${process.env.REACT_APP_URL}/events/${id}`;
+      axios.put(url, obj);
+      this.props.updateData();
     } catch (error) {
       console.log(error.message);
     }
   }
 
-  editEventData = async (id) => {
-    try{
-      let url = `${process.env.REACT_APP_URL}/events/${id}`;
-      const config = {
-
-      }
-      let data = axios(config);
-    } catch (error) {
-
+  handleEditedEvent = (event) => {
+    const eventObj = {
+      title: this.state.eventNameEdit || this.state.eventName,
+      description: this.state.descriptionEdit || this.state.description,
+      time: this.state.timeEdit || this.state.time,
+      date: this.state.date,
+      user: '',
+      _id: event._id,
+      __v: event.__v,
     }
-  }
+    console.log(eventObj);
 
+    this.editEventData(eventObj);
+    this.setState({
+      showEditForm: false,
+      showModal: false,
+    })
+  }
 
   handleAddEvent = (e) => {
     e.preventDefault();
@@ -74,7 +97,7 @@ class Day extends React.Component {
       date: this.state.date,
       user: '',
     }
-    this.props.updateEvents(eventObj);
+    // this.props.updateEvents(eventObj);
     this.postEventData(eventObj);
 
     this.state.events.push(eventObj);
@@ -218,8 +241,6 @@ class Day extends React.Component {
 
   render() {
     let groups = this.organizeByTableRow();
-    // console.log(`this.state.date.event ${this.state.date.event}`);
-    // console.log(`this.state.events ${this.state.events[0]}`)
     return (
       <>
         {this.renderDaysByRow(groups)}
@@ -241,35 +262,58 @@ class Day extends React.Component {
               <AccordionDetails>
                 {
                   !!this.state.date.event &&
-                    this.state.date.event.map(event => {
-                      // console.log(event);
-                      return (
-                        <Accordion>
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1a-content"
-                            id="panel1a-header"
-                          >
-                            <Typography>{`${event.name} at ${event.time}`}</Typography>
-                          </AccordionSummary>
-                          <AccordionDetails>
-                            <p>{`${event.description}`}</p>
-                            <Button onClick={() => this.deleteEventData(event._id)}><ClearIcon id='delete-icon'/></Button>
-                            <Button onClick={() => this.deleteEventData(event._id)}><EditIcon id='delete-icon'/></Button>
-                          </AccordionDetails>
-                        </Accordion>
-                      )
-                    })
+                  this.state.date.event.map(event => {
+                    // console.log(event);
+                    return (
+                      <Accordion>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel1a-content"
+                          id="panel1a-header"
+                        >
+                          <Typography>{`${event.name} at ${event.time}`}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          {
+                            this.state.showEditForm ?
+                              <form>
+                                <label>Name of Event</label><br />
+                                <input
+                                  type='text'
+                                  name='name'
+                                  placeholder={event.name}
+                                  value={this.state.eventNameEdit}
+                                  onChange={(e) => { this.setState({ eventNameEdit: e.target.value }) }}
+                                /><br />
+                                <label>Description</label><br />
+                                <input
+                                  type='text'
+                                  name='description'
+                                  placeholder={event.description}
+                                  value={this.state.descriptionEdit}
+                                  onChange={(e) => { this.setState({ descriptionEdit: e.target.value }) }}
+                                /><br />
+                                <label>Time</label><br />
+                                <input
+                                  type='time'
+                                  min='00:00'
+                                  max='2330'
+                                  name='time'
+                                  placeholder={event.time}
+                                  value={this.state.timeEdit}
+                                  onChange={(e) => { this.setState({ timeEdit: e.target.value }) }}
+                                /><br />
+                                <Button onClick={() => this.handleEditedEvent(event)}>Update Event</Button>
+                              </form>
+                            : <p>{`${event.description}`}</p>
+                          }
+                          <Button onClick={() => this.deleteEventData(event)}><ClearIcon id='delete-icon' /></Button>
+                          <Button onClick={() => this.setState({showEditForm: true})}><EditIcon id='delete-icon' /></Button>
+                        </AccordionDetails>
+                      </Accordion>
+                    )
+                  })
                 }
-                {/* {
-                  !!this.state.date.event ?
-                    this.state.date.event.map(event => {
-                      return (
-                        <EventBanner event={event} showModal={this.state.showModal} />
-                      )
-                    })
-                    : ''
-                } */}
               </AccordionDetails>
             </Accordion>
             <Accordion>
