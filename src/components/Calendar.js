@@ -179,7 +179,7 @@ class Calendar extends React.Component {
   render() {
     let month = this.month[this.state.selectedMonth];
     return (
-      <>
+      <div id='calendar-container'>
         <div className='arrows'>
           <Button id='arrow-btn' onClick={this.decrementSelectedMonth}><ChevronLeftIcon /></Button>
           <h3>{this.month[this.state.selectedMonth]}</h3>
@@ -218,7 +218,7 @@ class Calendar extends React.Component {
             </TableBody>
           </Table>
         </TableContainer>
-      </>
+      </div>
     )
   }
 }

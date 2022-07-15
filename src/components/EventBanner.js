@@ -10,7 +10,7 @@ class EventBanner extends React.Component {
       //   {
       //     this.props.showModal ?
             <div id='banner-div'>
-              {this.props.event.name}
+              <p>{this.props.event.name}</p>
             </div>
         //     :
         //     <div id='modal-banner-div'>
