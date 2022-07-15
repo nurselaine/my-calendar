@@ -44,6 +44,12 @@ class Calendar extends React.Component {
     // this.getEventData(formatDay[0]);
   }
 
+  getUpdatedData = (newDay) => {
+    this.setState({
+      day: newDay
+    })
+  }
+
   getRenderData = async () => {
     // Goal: Fetch data (holidays + events) + combine/merge data + format data
     // tldr: get data ready to be render
@@ -276,6 +282,7 @@ class Calendar extends React.Component {
                         holidays={this.state.holidays}
                         key={i}
                         updateEvents={this.getNewEvent}
+                        updateData={this.getUpdatedData}
                       />
                     </>
                   )

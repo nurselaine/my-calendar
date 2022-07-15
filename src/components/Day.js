@@ -15,6 +15,8 @@ import dayjs from 'dayjs';
 import AddIcon from '@mui/icons-material/Add';
 import { Button } from '@mui/material';
 import EventBanner from './EventBanner';
+import ClearIcon from '@mui/icons-material/Clear';
+import EditIcon from '@mui/icons-material/Edit';
 import './Day.css';
 
 class Day extends React.Component {
@@ -36,14 +38,31 @@ class Day extends React.Component {
   postEventData = async (eventObj) => {
     let url = `${process.env.REACT_APP_URL}/events`;
     let data = await axios.post(url, eventObj);
-    console.log(data);
+    // console.log(data);
   }
 
-  // deleteEventData = (id) => {
-  //   let url = `${process.env.REACT_APP_URL}/events`;
-  //   let data = await axios.post(url, eventObj);
-  //   console.log(data);
-  // }
+  deleteEventData = async (id) => {
+    try {
+      let url = `${process.env.REACT_APP_URL}/events/${id}`;
+      await axios.delete(url);
+      this.props.day = this.props.day.filter(day => day.event.id !== id);
+      this.props.updateData(this.props.day);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  editEventData = async (id) => {
+    try{
+      let url = `${process.env.REACT_APP_URL}/events/${id}`;
+      const config = {
+
+      }
+      let data = axios(config);
+    } catch (error) {
+
+    }
+  }
 
 
   handleAddEvent = (e) => {
@@ -153,9 +172,9 @@ class Day extends React.Component {
                       !!day.event &&
                       day.event.map((event, i) => {
                         return (
-                          <EventBanner 
-                            key={i} 
-                            event={event} 
+                          <EventBanner
+                            key={i}
+                            event={event}
                             showModal={this.state.showModal}
                           />
                         )
@@ -175,11 +194,11 @@ class Day extends React.Component {
                     {
                       day && !!day.event &&
                       day.event.map((event, i) => {
-                        console.log(event);
+                        // console.log(event);
                         return (
-                          <EventBanner 
-                            key={i} 
-                            event={event} 
+                          <EventBanner
+                            key={i}
+                            event={event}
                             showModal={this.state.showModal}
                           />
                         )
@@ -221,14 +240,36 @@ class Day extends React.Component {
               </AccordionSummary>
               <AccordionDetails>
                 {
+                  !!this.state.date.event &&
+                    this.state.date.event.map(event => {
+                      // console.log(event);
+                      return (
+                        <Accordion>
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                          >
+                            <Typography>{`${event.name} at ${event.time}`}</Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <p>{`${event.description}`}</p>
+                            <Button onClick={() => this.deleteEventData(event._id)}><ClearIcon id='delete-icon'/></Button>
+                            <Button onClick={() => this.deleteEventData(event._id)}><EditIcon id='delete-icon'/></Button>
+                          </AccordionDetails>
+                        </Accordion>
+                      )
+                    })
+                }
+                {/* {
                   !!this.state.date.event ?
                     this.state.date.event.map(event => {
                       return (
-                        <EventBanner event={event} showModal={this.state.showModal}/>
+                        <EventBanner event={event} showModal={this.state.showModal} />
                       )
                     })
                     : ''
-                }
+                } */}
               </AccordionDetails>
             </Accordion>
             <Accordion>
