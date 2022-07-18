@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import Day from './Day.js';
 import dayjs from 'dayjs';
+import Appbar from './Appbar.js';
 import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
 import {
@@ -180,6 +181,7 @@ class Calendar extends React.Component {
     let month = this.month[this.state.selectedMonth];
     return (
       <div id='calendar-container'>
+        <Appbar />
         <div className='arrows'>
           <Button id='arrow-btn' onClick={this.decrementSelectedMonth}><ChevronLeftIcon /></Button>
           <h3>{this.month[this.state.selectedMonth]}</h3>
