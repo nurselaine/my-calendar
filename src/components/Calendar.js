@@ -1,8 +1,8 @@
 import React from 'react';
+import { withAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import Day from './Day.js';
 import dayjs from 'dayjs';
-import Appbar from './Appbar.js';
 import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
 import {
@@ -42,6 +42,12 @@ class Calendar extends React.Component {
     this.getRenderData();
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.user !== this.props.user) {
+      this.getRenderData();
+    }
+  }
+
   getUpdatedData = async () => {
     this.getRenderData();
   }
@@ -58,6 +64,8 @@ class Calendar extends React.Component {
     let formatDay = this.state.monthsInYear.map((month, i) => this.formatData(this.state.monthsInYear.indexOf(month), i));
     formatDay = formatDay[0];
 
+    console.log(`holiday data ${holidayData}`);
+    console.log(`event data ${eventData}`);
 
     holidayData.forEach((holiday) => {
       // get month index
@@ -70,7 +78,6 @@ class Calendar extends React.Component {
     }
     );
 
-
     eventData.forEach(event => {
       const month = this.month.indexOf(event.date.month);
       // console.log(month);
@@ -81,7 +88,7 @@ class Calendar extends React.Component {
       correctDate.event.push(event);
       // console.log(correctDate);
     })
-    // console.log(formatDay);
+    console.log(formatDay);
     this.setState({
       day: formatDay,
     })
@@ -101,14 +108,36 @@ class Calendar extends React.Component {
   }
 
   getEventData2 = async () => {
+    console.log(this.props.user);
     try {
-      let url = `${process.env.REACT_APP_URL}/events/collection`;
-      let event = await axios.get(url);
-      event = event.data;
-      event.map(event => {
-        event.name = event.title;
-      })
-      return event;
+      if(this.props.user){
+        const res = await this.props.auth0.getIdTokenClaims();
+        console.log(res);
+        const jwt = res.__raw;
+        const config = {
+          method: 'get',
+          baseURL: process.env.REACT_APP_URL,
+          url: '/events/collection',
+          headers: {"Authorization": `Bearer ${jwt}`},
+        }
+        console.log(config);
+        let eventData = await axios(config);
+        eventData = eventData.data;
+        console.log(eventData);
+        if(eventData) {
+          eventData.map(event => {
+              event.name = event.title;
+            })
+          return eventData;
+        }
+      }
+      // let url = `${process.env.REACT_APP_URL}/events/collection`;
+      // let event = await axios.get(url);
+      // event = event.data;
+      // event.map(event => {
+      //   event.name = event.title;
+      // })
+      // return event;
     } catch (error) {
       console.log(error.message);
     }
@@ -178,10 +207,11 @@ class Calendar extends React.Component {
   }
 
   render() {
+    // console.log(this.state.holiday);
+    // console.log(this.state.day);
     let month = this.month[this.state.selectedMonth];
     return (
       <div id='calendar-container'>
-        <Appbar />
         <div className='arrows'>
           <Button id='arrow-btn' onClick={this.decrementSelectedMonth}><ChevronLeftIcon /></Button>
           <h3>{this.month[this.state.selectedMonth]}</h3>
@@ -212,6 +242,7 @@ class Calendar extends React.Component {
                         holidays={this.state.holidays}
                         key={i}
                         updateData={this.getUpdatedData}
+                        user={this.props.user}
                       />
                     </>
                   )
@@ -227,4 +258,4 @@ class Calendar extends React.Component {
 
 
 
-export default Calendar;
+export default withAuth0(Calendar);

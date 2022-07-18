@@ -34,6 +34,7 @@ class Day extends React.Component {
       timeEdit: '',
       date: '',
       showEditForm: false,
+      user: this.props.user,
     })
 
     this.handleAddEvent = this.handleAddEvent.bind(this);
@@ -75,7 +76,7 @@ class Day extends React.Component {
       description: this.state.descriptionEdit || this.state.description,
       time: this.state.timeEdit || this.state.time,
       date: this.state.date,
-      user: '',
+      user: this.state.user,
       _id: event._id,
       __v: event.__v,
     }
@@ -95,7 +96,7 @@ class Day extends React.Component {
       description: this.state.description,
       time: this.state.time,
       date: this.state.date,
-      user: '',
+      user: this.state.user,
     }
     // this.props.updateEvents(eventObj);
     this.postEventData(eventObj);
@@ -173,7 +174,7 @@ class Day extends React.Component {
   }
 
   renderDaysByRow = (groups) => {
-    // console.log(this.props.day);
+    console.log(this.props.day);
     let today = dayjs();
     let renderRows = groups.map((row, i) => {
       return (

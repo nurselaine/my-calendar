@@ -5,3 +5,8 @@
   width: 100%;
   transform: none;
 }
+
+#appbar {
+  background-color: white;
+  color: #7d4dff;
+}
